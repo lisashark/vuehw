@@ -205,6 +205,19 @@
                         location.href = "./login.html";
                     })
             },
+            getProduct(){
+                axios.get(`${this.url}/api/${this.path}/admin/products/all`)
+                    .then((res) => {
+                        const productsList = Object.values(res.data.products)
+                         productsList.forEach( (item) => {
+                            this.products.push( item)}
+                        )
+                    })
+                    .catch((error) => {
+                        console.dir(error)                        
+                    })
+
+            },
             detailBtn(item) {
                 this.showProduct = item;
                 this.showActive = 1;
@@ -212,6 +225,7 @@
         },
         mounted() {
             this.checkLogin();
+            this.getProduct();
         },
 
     }).mount('#app')
