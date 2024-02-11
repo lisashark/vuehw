@@ -1,128 +1,92 @@
 <!DOCTYPE html>
 <html lang="zh-Hant-TW">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+      crossorigin="anonymous"
+    />
 
     <style>
-        html,
-        body {
-            height: 100%;
-            text-align: center;
-        }
+      html,
+      body {
+        height: 100%;
+        text-align: center;
+      }
 
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-        .form-signin {
-            width: 100%;
-            max-width: 330px;
-            padding: 15px;
-            margin: auto;
-        }
+      .form-signin {
+        width: 100%;
+        max-width: 330px;
+        padding: 15px;
+        margin: auto;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div id="app">
-        <div class="container">
-            <div class="row justify-content-center">
-                <h1 class="h3 mb-3 font-weight-normal">
-                    請先登入
-                </h1>
-                <div class="col-8">
-                    <form id="form" class="form-signin">
-                        <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="username" placeholder="name@example.com" required autofocus v-model="emailInput">
-                            <label for="username">Email address</label>
-                        </div>
-                        <div class="form-floating">
-                            <input type="password" class="form-control" id="password" placeholder="Password" required v-model="pwInput">
-                            <label for="password">Password</label>
-                        </div>
-                        <button class="btn btn-lg btn-primary w-100 mt-3" type="submit" id="login" @click.prevent="login">
-                            登入
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <p class="mt-5 mb-3 text-muted">
-                &copy; 2021~∞ - 六角學院
-            </p>
+      <div class="container">
+        <div class="row justify-content-center">
+          <h1 class="h3 mb-3 font-weight-normal">請先登入</h1>
+          <div class="col-8">
+            <form id="form" class="form-signin">
+              <div class="form-floating mb-3">
+                <input
+                  type="email"
+                  class="form-control"
+                  id="username"
+                  placeholder="name@example.com"
+                  required
+                  autofocus
+                  v-model.trim="emailInput"
+                />
+                <label for="username">Email address</label>
+              </div>
+              <div class="form-floating">
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password"
+                  placeholder="Password"
+                  required
+                  v-model.trim="pwInput"
+                />
+                <label for="password">Password</label>
+              </div>
+              <button
+                class="btn btn-lg btn-primary w-100 mt-3"
+                type="submit"
+                id="login"
+                :disabled="!(emailInput && pwInput)"
+                @click.prevent="login"
+              >
+                登入
+              </button>
+            </form>
+          </div>
         </div>
+        <p class="mt-5 mb-3 text-muted">&copy; 2021~∞ - 六角學院</p>
+      </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
-
-    <script>
-        const { createApp } = Vue
-        createApp({
-            data() {
-                return {
-                    emailInput: '',
-                    pwInput: '',
-                    url: 'https://vue3-course-api.hexschool.io/v2',
-                    path: 'lisashark'
-                }
-            },
-            methods: {
-                login() {
-                    const userData = {
-                        "username": this.emailInput,
-                        "password": this.pwInput
-                    }
-                    console.log(userData)
-                    axios.post(`${this.url}/admin/signin`, userData)
-                        .then((res) => {
-                            console.log(res);
-                              const { token, expired } = res.data;
-                            console.log(token, expired);
-                            document.cookie = `hexToken=${token}; expires=${new Date(expired)};`;
-                            location.href = "./product.html";
-                        })
-
-                        .catch((error) => {
-                            console.dir(error);
-                            alert('請再次確認您的帳密')
-                        })
-                },
-                checkLogin() {
-                    let token = ''
-                    if (document.cookie.search('hexToken') >= 0) {
-                        token = document.cookie.split(';').find(item => item.search('hexToken') >= 0).split('=')[1];
-                        axios.defaults.headers.common['Authorization'] = token;
-                    }
-
-                    axios.post(`${this.url}/api/user/check`)
-                        .then((res) => {
-                            console.log(res);
-                            location.href = "./product.html";
-                        })
-                        .catch((error) => {
-                            console.dir(error)
-                        })
-                }
-            },
-            mounted() {
-                this.checkLogin();
-            }
-        }).mount('#app')
-    </script>
-</body>
-
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js"
+      integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc"
+      crossorigin="anonymous"
+    ></script>
+    <script src="./assets/js/login.js"></script>
+  </body>
 </html>
-
-
-<!-- 使用者可以從登入頁面登入，並轉到後台商品頁面
-使用者若無登入直接進入商品頁面，會被導回登入頁面
-使用者可以查看產品列表
-使用者可以點擊單一產品，查看詳細資訊 -->
